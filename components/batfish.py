@@ -1,8 +1,9 @@
 import pandas as pd
 from pybatfish.client.session import Session
-from pybatfish.question import bfq
-from pybatfish.question import load_questions, list_questions
 from pybatfish.datamodel import HeaderConstraints, Interface
+
+# Global session for questions - will be set in __init__
+_session = None
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
@@ -17,7 +18,9 @@ class Batfish():
     def __init__(self, batfish_host):
         self.batfish_host = batfish_host
         self.session = Session(host=batfish_host)
-        load_questions()
+        # Set global session for backward compatibility
+        global _session
+        _session = self.session
 
     def delete_network(self, network):
         self.session.delete_network(network)
@@ -37,22 +40,22 @@ class Batfish():
 
     @property
     def get_layer3_edges(self):
-        result = bfq.layer3Edges().answer().frame()
+        result = self.session.q.layer3Edges().answer().frame()
         return result
 
     @property
     def get_interfaces(self):
-        result = bfq.ipOwners().answer().frame()
+        result = self.session.q.ipOwners().answer().frame()
         return result
 
     @property
     def get_ospf_edges(self):
-        result = bfq.ospfEdges().answer().frame()
+        result = self.session.q.ospfEdges().answer().frame()
         return result
 
     @property
     def get_bgp_edges(self):
-        result = bfq.bgpEdges().answer().frame()
+        result = self.session.q.bgpEdges().answer().frame()
         return result
 
     def get_existing_snapshots(self):
@@ -82,8 +85,8 @@ class Batfish():
             raise ValueError(f"Invalid question name: {question_name}")
 
         try:
-            # Use getattr to safely get the question function
-            question_func = getattr(bfq, question_name, None)
+            # Use getattr to safely get the question function from session
+            question_func = getattr(self.session.q, question_name, None)
             if question_func is None:
                 raise AttributeError(f"Question '{question_name}' not found")
 
@@ -109,14 +112,14 @@ class Batfish():
                                     applications=applications,
                                     ipProtocols=ipProtocols)
         if bidir:
-            result = bfq.bidirectionalTraceroute(startLocation=src,
-                                                 headers=headers)\
+            result = self.session.q.bidirectionalTraceroute(startLocation=src,
+                                                            headers=headers)\
                 .answer(snapshot=snapshot)\
                 .frame()
         else:
 
-            result = bfq.traceroute(startLocation=src,
-                                    headers=headers)\
+            result = self.session.q.traceroute(startLocation=src,
+                                               headers=headers)\
                 .answer(snapshot=snapshot)\
                 .frame()
         return result
@@ -172,7 +175,7 @@ class Batfish():
                 snapshot_name="refactored",
                 overwrite=True
             )
-            result = bfq.compareFilters().answer(
+            result = self.session.q.compareFilters().answer(
                 snapshot=refactored_snapshot,
                 reference_snapshot=original_snapshot
             ).frame()
@@ -204,8 +207,8 @@ class Batfish():
             raise ValueError(f"Invalid question name: {question_name}")
 
         try:
-            # Use getattr to safely get the question function
-            question_func = getattr(bfq, question_name, None)
+            # Use getattr to safely get the question function from session
+            question_func = getattr(self.session.q, question_name, None)
             if question_func is None:
                 raise AttributeError(f"Question '{question_name}' not found")
 
@@ -218,4 +221,5 @@ class Batfish():
 
     @property
     def list_questions(self):
-        return list_questions()
+        # Return available questions from the session
+        return self.session.list_questions()
