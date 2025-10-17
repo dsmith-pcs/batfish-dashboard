@@ -1,11 +1,5 @@
 import pandas as pd
 from pybatfish.client.session import Session
-from pybatfish.client.commands import (
-    bf_delete_network, bf_delete_snapshot, bf_set_snapshot, bf_set_network,
-    bf_list_networks, bf_list_snapshots, bf_init_snapshot, bf_fork_snapshot,
-    bf_session
-)
-from pybatfish.client.extended import bf_get_snapshot_input_object_text
 from pybatfish.question import bfq
 from pybatfish.question import load_questions, list_questions
 from pybatfish.datamodel import HeaderConstraints, Interface
@@ -22,25 +16,24 @@ class Batfish():
 
     def __init__(self, batfish_host):
         self.batfish_host = batfish_host
-        # Set the global session host for backwards compatibility
-        bf_session.host = batfish_host
+        self.session = Session(host=batfish_host)
         load_questions()
 
     def delete_network(self, network):
-        bf_delete_network(network)
+        self.session.delete_network(network)
 
     def delete_snapshot(self, snapshot):
-        bf_delete_snapshot(snapshot)
+        self.session.delete_snapshot(snapshot)
 
     def set_snapshot(self, snapshot):
-        bf_set_snapshot(snapshot)
+        self.session.set_snapshot(snapshot)
 
     def set_network(self, network):
-        bf_set_network(network)
+        self.session.set_network(network)
 
     @property
     def get_existing_networks(self):
-        return bf_list_networks()
+        return self.session.list_networks()
 
     @property
     def get_layer3_edges(self):
@@ -64,15 +57,15 @@ class Batfish():
 
     def get_existing_snapshots(self):
         try:
-            snapshotlist = bf_list_snapshots()
+            snapshotlist = self.session.list_snapshots()
         except ValueError:
             snapshotlist = ["None"]
         return snapshotlist
 
     def init_snapshot(self, snapshot_name, overwrite=True):
         snapshot_dir = "assets/snapshot_holder/"
-        bf_init_snapshot(snapshot_dir, name=str(snapshot_name),
-                         overwrite=overwrite)
+        self.session.init_snapshot(snapshot_dir, name=str(snapshot_name),
+                                   overwrite=overwrite)
 
     def get_info(self, question_name):
         """
@@ -129,7 +122,7 @@ class Batfish():
         return result
 
     def get_configuration(self, file_name, snapshot):
-        return bf_get_snapshot_input_object_text(file_name, snapshot=snapshot)
+        return self.session.get_snapshot_input_object_text(file_name, snapshot=snapshot)
 
     def network_failure(self,
                         base_snapshot,
@@ -138,18 +131,18 @@ class Batfish():
                         deactivated_int,
                         overwrite=True):
         if not deactivated_int:
-            bf_fork_snapshot(base_snapshot,
-                             reference_snapshot,
-                             deactivate_nodes=deactivate_node,
-                             overwrite=overwrite)
+            self.session.fork_snapshot(base_snapshot,
+                                       reference_snapshot,
+                                       deactivate_nodes=deactivate_node,
+                                       overwrite=overwrite)
         else:
-            bf_fork_snapshot(base_snapshot,
-                             reference_snapshot,
-                             deactivate_interfaces=[
-                                 Interface(deactivate_node[0],
-                                           deactivated_int[0])
-                             ],
-                             overwrite=overwrite)
+            self.session.fork_snapshot(base_snapshot,
+                                       reference_snapshot,
+                                       deactivate_interfaces=[
+                                           Interface(deactivate_node[0],
+                                                     deactivated_int[0])
+                                       ],
+                                       overwrite=overwrite)
 
 
 
@@ -167,13 +160,13 @@ class Batfish():
             pandas.DataFrame: Comparison results
         """
         try:
-            original_snapshot = bf_session.init_snapshot_from_text(
+            original_snapshot = self.session.init_snapshot_from_text(
                 original_acl,
                 platform=original_platform,
                 snapshot_name="original",
                 overwrite=True
             )
-            refactored_snapshot = bf_session.init_snapshot_from_text(
+            refactored_snapshot = self.session.init_snapshot_from_text(
                 refactored_acl,
                 platform=refactored_platform,
                 snapshot_name="refactored",
