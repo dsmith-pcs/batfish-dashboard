@@ -1,13 +1,9 @@
 import pandas as pd
-from pybatfish.client.commands import bf_session
-from pybatfish.client.commands import bf_delete_network
-from pybatfish.client.commands import bf_delete_snapshot
-from pybatfish.client.commands import bf_set_snapshot
-from pybatfish.client.commands import bf_set_network
-from pybatfish.client.commands import bf_list_networks
-from pybatfish.client.commands import bf_list_snapshots
-from pybatfish.client.commands import bf_init_snapshot
-from pybatfish.client.commands import bf_fork_snapshot
+from pybatfish.client.session import Session
+from pybatfish.client.commands import (
+    bf_delete_network, bf_delete_snapshot, bf_set_snapshot, bf_set_network,
+    bf_list_networks, bf_list_snapshots, bf_init_snapshot, bf_fork_snapshot
+)
 from pybatfish.client.extended import bf_get_snapshot_input_object_text
 from pybatfish.question import bfq
 from pybatfish.question import load_questions, list_questions
@@ -25,7 +21,8 @@ class Batfish():
 
     def __init__(self, batfish_host):
         self.batfish_host = batfish_host
-        bf_session.host = batfish_host
+        self.session = Session(host=batfish_host)
+        self.session.set_session()
         load_questions()
 
     def delete_network(self, network):
@@ -76,10 +73,33 @@ class Batfish():
         bf_init_snapshot(snapshot_dir, name=str(snapshot_name),
                          overwrite=overwrite)
 
-    def get_info(self, command):
-        execute = 'bfq.' + command + '().answer().frame()'
-        result = eval(execute)
-        return result
+    def get_info(self, question_name):
+        """
+        Execute a Batfish question safely using getattr instead of eval.
+
+        Args:
+            question_name (str): Name of the Batfish question to execute
+
+        Returns:
+            pandas.DataFrame: Result of the question execution
+        """
+        # Validate the question name to prevent injection attacks
+        if not question_name.isalnum():
+            raise ValueError(f"Invalid question name: {question_name}")
+
+        try:
+            # Use getattr to safely get the question function
+            question_func = getattr(bfq, question_name, None)
+            if question_func is None:
+                raise AttributeError(f"Question '{question_name}' not found")
+
+            # Execute the question and return the result
+            result = question_func().answer().frame()
+            return result
+        except Exception as e:
+            print(f"Error executing question '{question_name}': {e}")
+            # Return empty DataFrame on error
+            return pd.DataFrame()
 
 
 
@@ -132,26 +152,75 @@ class Batfish():
 
 
 
-    def compare_acls(self,orginal_acl, refactored_acl, original_paltform, refactored_platform):
-        original_snapshot = bf_session.init_snapshot_from_text(orginal_acl,
-                                           platform=original_paltform,
-                                           snapshot_name="original",
-                                           overwrite=True)
-        refactored_snapshot = bf_session.init_snapshot_from_text(refactored_acl,
-                                           platform=refactored_platform,
-                                           snapshot_name="refactored",
-                                           overwrite=True)
-        result = bfq.compareFilters().answer(snapshot=refactored_snapshot, reference_snapshot=original_snapshot).frame()
-        result.rename(
-            columns={'Line_Content': 'Refactored ACL Line', 'Reference_Line_Content': 'Original ACL Line'},
-            inplace=True)
-        return result
+    def compare_acls(self, original_acl, refactored_acl, original_platform, refactored_platform):
+        """
+        Compare two ACLs using Batfish.
+
+        Args:
+            original_acl (str): Original ACL configuration text
+            refactored_acl (str): Refactored ACL configuration text
+            original_platform (str): Platform for original ACL
+            refactored_platform (str): Platform for refactored ACL
+
+        Returns:
+            pandas.DataFrame: Comparison results
+        """
+        try:
+            original_snapshot = self.session.init_snapshot_from_text(
+                original_acl,
+                platform=original_platform,
+                snapshot_name="original",
+                overwrite=True
+            )
+            refactored_snapshot = self.session.init_snapshot_from_text(
+                refactored_acl,
+                platform=refactored_platform,
+                snapshot_name="refactored",
+                overwrite=True
+            )
+            result = bfq.compareFilters().answer(
+                snapshot=refactored_snapshot,
+                reference_snapshot=original_snapshot
+            ).frame()
+            result.rename(
+                columns={
+                    'Line_Content': 'Refactored ACL Line',
+                    'Reference_Line_Content': 'Original ACL Line'
+                },
+                inplace=True
+            )
+            return result
+        except Exception as e:
+            print(f"Error comparing ACLs: {e}")
+            return pd.DataFrame()
 
 
-    def get_question_description(self, question):
-        execute = 'bfq.' + question + '().get_long_description()'
-        result = eval(execute)
-        return result
+    def get_question_description(self, question_name):
+        """
+        Get the description of a Batfish question safely.
+
+        Args:
+            question_name (str): Name of the Batfish question
+
+        Returns:
+            str: Description of the question
+        """
+        # Validate the question name to prevent injection attacks
+        if not question_name.isalnum():
+            raise ValueError(f"Invalid question name: {question_name}")
+
+        try:
+            # Use getattr to safely get the question function
+            question_func = getattr(bfq, question_name, None)
+            if question_func is None:
+                raise AttributeError(f"Question '{question_name}' not found")
+
+            # Get the description
+            result = question_func().get_long_description()
+            return result
+        except Exception as e:
+            print(f"Error getting description for question '{question_name}': {e}")
+            return f"Description unavailable for question: {question_name}"
 
     @property
     def list_questions(self):

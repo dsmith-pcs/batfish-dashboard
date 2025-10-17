@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:batfish.readthedocs.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:pybatfish.readthedocs.io)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
