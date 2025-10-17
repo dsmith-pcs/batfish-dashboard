@@ -712,9 +712,8 @@ def get_acl_content():
                                               html.Div(
                                                   children=[
                                                       dbc.InputGroup([
-                                                          dbc.InputGroupAddon(
-                                                              "Choose Platform",
-                                                              addon_type="prepend"),
+                                                          dbc.InputGroupText(
+                                                              "Choose Platform"),
                                                           dbc.Select(
                                                               id="acl_original_choose_platform",
                                                               options=options,
@@ -750,9 +749,8 @@ def get_acl_content():
                                           id="acl_refactored_choose_platform_container",
                                           children=[
                                               dbc.InputGroup([
-                                                  dbc.InputGroupAddon(
-                                                      "Choose Platform",
-                                                      addon_type="prepend"),
+                                                  dbc.InputGroupText(
+                                                      "Choose Platform"),
                                                   dbc.Select(
                                                       id="acl_refactored_choose_platform",
                                                       options=options,

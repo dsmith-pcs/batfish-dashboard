@@ -152,7 +152,7 @@ def get_batfish_networks(n, value):
 
         dbc.Form(
             [
-                dbc.FormGroup(
+                html.Div(
                     [
                         dbc.Input(
                             id="create-network-form",
@@ -602,7 +602,7 @@ def get_advanced_options_form(advanced_option_sw):
                 [
                     dbc.Col(
                         children=[
-                            dbc.FormGroup(
+                            html.Div(
                                 [
                                     html.Fieldset(
                                         id="traceroute_src_ports_fieldset",
@@ -622,7 +622,7 @@ def get_advanced_options_form(advanced_option_sw):
 
                     dbc.Col(
                         children=[
-                            dbc.FormGroup(
+                            html.Div(
                                 [
                                     html.Fieldset(
                                         id="traceroute_dst_ports_fieldset",
@@ -642,7 +642,7 @@ def get_advanced_options_form(advanced_option_sw):
 
                     dbc.Col(
                         children=[
-                            dbc.FormGroup(
+                            html.Div(
                                 [
                                     html.Fieldset(
                                         id="traceroute_application_fieldset",
@@ -662,7 +662,7 @@ def get_advanced_options_form(advanced_option_sw):
 
                     dbc.Col(
                         children=[
-                            dbc.FormGroup(
+                            html.Div(
                                 [
                                     html.Fieldset(
                                         id="traceroute_ip_protocol_fieldset",

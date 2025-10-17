@@ -2,7 +2,8 @@ import pandas as pd
 from pybatfish.client.session import Session
 from pybatfish.client.commands import (
     bf_delete_network, bf_delete_snapshot, bf_set_snapshot, bf_set_network,
-    bf_list_networks, bf_list_snapshots, bf_init_snapshot, bf_fork_snapshot
+    bf_list_networks, bf_list_snapshots, bf_init_snapshot, bf_fork_snapshot,
+    bf_session
 )
 from pybatfish.client.extended import bf_get_snapshot_input_object_text
 from pybatfish.question import bfq
@@ -21,8 +22,8 @@ class Batfish():
 
     def __init__(self, batfish_host):
         self.batfish_host = batfish_host
-        self.session = Session(host=batfish_host)
-        self.session.set_session()
+        # Set the global session host for backwards compatibility
+        bf_session.host = batfish_host
         load_questions()
 
     def delete_network(self, network):
@@ -166,13 +167,13 @@ class Batfish():
             pandas.DataFrame: Comparison results
         """
         try:
-            original_snapshot = self.session.init_snapshot_from_text(
+            original_snapshot = bf_session.init_snapshot_from_text(
                 original_acl,
                 platform=original_platform,
                 snapshot_name="original",
                 overwrite=True
             )
-            refactored_snapshot = self.session.init_snapshot_from_text(
+            refactored_snapshot = bf_session.init_snapshot_from_text(
                 refactored_acl,
                 platform=refactored_platform,
                 snapshot_name="refactored",
