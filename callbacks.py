@@ -150,40 +150,41 @@ def get_batfish_networks(n, value):
     )
     create_delete_network_children = [
 
-        dbc.Form(
-            [
-                html.Div(
-                    [
-                        dbc.Input(
-                            id="create-network-form",
-                            value="",
-                            placeholder="New Network Name"),
-                    ],
-                    className="mr-3",
-                ),
+        dbc.Row([
+            dbc.Col([
+                dbc.Input(
+                    id="create-network-form",
+                    value="",
+                    placeholder="New Network Name"),
+            ], width=3),
+            dbc.Col([
                 dbc.Button("Submit",
                            id="create_network_submit_button",
                            color="dark",
                            outline=True,
                            size="sm",
                            ),
+            ], width=2),
+            dbc.Col([
                 dcc.Dropdown(
                     id="delete_network_dropdown",
                     placeholder='Select a Network',
                     options=options,
                     value=None
                 ),
+            ], width=4),
+            dbc.Col([
                 dbc.Button("Delete",
                            id="delete_network_submit_button",
                            color="dark",
                            outline=True,
                            size="sm",
                            ),
+            ], width=2),
+            dbc.Col([
                 html.H1(id="delete-success", style={"display": "none"})
-
-            ],
-            inline=True,
-        )
+            ], width=1),
+        ])
     ]
     return dropdown2, dropdown1, create_delete_network_children
 
@@ -444,8 +445,8 @@ def delete_snapshot_div(network_value, host_value):
     options = [{'label': snapshot, 'value': snapshot} for snapshot in
                batfish.get_existing_snapshots()]
     children = [
-        dbc.Form(
-            [
+        dbc.Row([
+            dbc.Col([
                 dcc.Dropdown(
                     id="delete_snapshot_dropdown",
                     placeholder='Delete Snapshot',
@@ -456,6 +457,8 @@ def delete_snapshot_div(network_value, host_value):
                     value=None
 
                 ),
+            ], width=8),
+            dbc.Col([
                 dbc.Button("Delete",
                            id="delete_snapshot_submit_button",
                            color="dark",
@@ -465,10 +468,11 @@ def delete_snapshot_div(network_value, host_value):
                                margin="5px",
                                height="25px",
                            )),
+            ], width=3),
+            dbc.Col([
                 html.P(id='delete_snapshot_hidden', style={"display": "none"})
-            ],
-            inline=True,
-        ),
+            ], width=1),
+        ]),
 
     ]
     return children
@@ -598,90 +602,87 @@ def get_advanced_options_form(advanced_option_sw):
     children = [
         html.Div(
             hidden=hidden,
-            children=[dbc.Form(
-                [
-                    dbc.Col(
-                        children=[
-                            html.Div(
-                                [
-                                    html.Fieldset(
-                                        id="traceroute_src_ports_fieldset",
-                                        children=[
-                                            html.Legend("Source Ports"),
-                                            dbc.Input(
-                                                id="traceroute_src_ports",
-                                                placeholder="e.g., 22"),
-                                        ],
+            children=[dbc.Row([
+                dbc.Col(
+                    children=[
+                        html.Div(
+                            [
+                                html.Fieldset(
+                                    id="traceroute_src_ports_fieldset",
+                                    children=[
+                                        html.Legend("Source Ports"),
+                                        dbc.Input(
+                                            id="traceroute_src_ports",
+                                            placeholder="e.g., 22"),
+                                    ],
 
-                                    ),
+                                ),
 
-                                ],
-                                className="mr-3",
-                            ),
-                        ]),
+                            ],
+                            className="mr-3",
+                        ),
+                    ], width=3),
 
-                    dbc.Col(
-                        children=[
-                            html.Div(
-                                [
-                                    html.Fieldset(
-                                        id="traceroute_dst_ports_fieldset",
-                                        children=[
-                                            html.Legend("Destination Port"),
-                                            dbc.Input(
-                                                id="traceroute_dst_ports",
-                                                placeholder="e.g., 22"),
-                                        ],
+                dbc.Col(
+                    children=[
+                        html.Div(
+                            [
+                                html.Fieldset(
+                                    id="traceroute_dst_ports_fieldset",
+                                    children=[
+                                        html.Legend("Destination Port"),
+                                        dbc.Input(
+                                            id="traceroute_dst_ports",
+                                            placeholder="e.g., 22"),
+                                    ],
 
-                                    ),
+                                ),
 
-                                ],
-                                className="mr-3",
-                            ),
-                        ]),
+                            ],
+                            className="mr-3",
+                        ),
+                    ], width=3),
 
-                    dbc.Col(
-                        children=[
-                            html.Div(
-                                [
-                                    html.Fieldset(
-                                        id="traceroute_application_fieldset",
-                                        children=[
-                                            html.Legend("Application"),
-                                            dbc.Input(
-                                                id="traceroute_applications",
-                                                placeholder="e.g., SSH, DNS, SNMP"),
-                                        ],
+                dbc.Col(
+                    children=[
+                        html.Div(
+                            [
+                                html.Fieldset(
+                                    id="traceroute_application_fieldset",
+                                    children=[
+                                        html.Legend("Application"),
+                                        dbc.Input(
+                                            id="traceroute_applications",
+                                            placeholder="e.g., SSH, DNS, SNMP"),
+                                    ],
 
-                                    ),
+                                ),
 
-                                ],
-                                className="mr-3",
-                            ),
-                        ]),
+                            ],
+                            className="mr-3",
+                        ),
+                    ], width=3),
 
-                    dbc.Col(
-                        children=[
-                            html.Div(
-                                [
-                                    html.Fieldset(
-                                        id="traceroute_ip_protocol_fieldset",
-                                        children=[
-                                            html.Legend("IP Protocol"),
-                                            dbc.Input(
-                                                id="traceroute_ip_protocols",
-                                                placeholder="e.g., TCP, UDP, ICMP"),
-                                        ],
+                dbc.Col(
+                    children=[
+                        html.Div(
+                            [
+                                html.Fieldset(
+                                    id="traceroute_ip_protocol_fieldset",
+                                    children=[
+                                        html.Legend("IP Protocol"),
+                                        dbc.Input(
+                                            id="traceroute_ip_protocols",
+                                            placeholder="e.g., TCP, UDP, ICMP"),
+                                    ],
 
-                                    ),
-                                ],
-                                className="mr-3",
-                            ),
-                        ]),
+                                ),
+                            ],
+                            className="mr-3",
+                        ),
+                    ], width=3),
 
-                ],
-                inline=True,
-            )]
+            ])]
         )
     ]
 

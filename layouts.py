@@ -93,20 +93,16 @@ main_page_layout = html.Div(id='main-page', children=[
                             children=[
                                 dbc.CardBody(
                                     children=[
-                                        dbc.Form(
-                                            [
-                                                html.Div(
-                                                    [
-                                                        dbc.Input(
-                                                            id="batfish_host_input",
-                                                            value="",
-                                                            placeholder="Enter host",
-                                                            persistence=True,
-                                                            ),
-
-                                                    ],
-                                                    className="mr-3",
+                                        dbc.Row([
+                                            dbc.Col([
+                                                dbc.Input(
+                                                    id="batfish_host_input",
+                                                    value="",
+                                                    placeholder="Enter host",
+                                                    persistence=True,
                                                 ),
+                                            ], width=8),
+                                            dbc.Col([
                                                 dbc.Button("Submit",
                                                            id="set_batfish_host_submit_button",
                                                            color="dark",
@@ -115,10 +111,8 @@ main_page_layout = html.Div(id='main-page', children=[
                                                            style=dict(
                                                                height="25px",
                                                            ))
-
-                                            ],
-                                            inline=True,
-                                        )
+                                            ], width=4),
+                                        ])
                                     ]
                                 )
                             ],
