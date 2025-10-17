@@ -23,16 +23,16 @@ class Batfish():
         _session = self.session
 
     def delete_network(self, network):
-        self.session.delete_network(network)
+        self.session.delete_network(name=network)
 
     def delete_snapshot(self, snapshot):
-        self.session.delete_snapshot(snapshot)
+        self.session.delete_snapshot(name=snapshot)
 
     def set_snapshot(self, snapshot):
-        self.session.set_snapshot(snapshot)
+        self.session.set_snapshot(name=snapshot)
 
     def set_network(self, network):
-        self.session.set_network(network)
+        self.session.set_network(name=network)
 
     @property
     def get_existing_networks(self):
@@ -134,13 +134,13 @@ class Batfish():
                         deactivated_int,
                         overwrite=True):
         if not deactivated_int:
-            self.session.fork_snapshot(base_snapshot,
-                                       reference_snapshot,
+            self.session.fork_snapshot(base_snapshot=base_snapshot,
+                                       name=reference_snapshot,
                                        deactivate_nodes=deactivate_node,
                                        overwrite=overwrite)
         else:
-            self.session.fork_snapshot(base_snapshot,
-                                       reference_snapshot,
+            self.session.fork_snapshot(base_snapshot=base_snapshot,
+                                       name=reference_snapshot,
                                        deactivate_interfaces=[
                                            Interface(deactivate_node[0],
                                                      deactivated_int[0])
@@ -164,15 +164,15 @@ class Batfish():
         """
         try:
             original_snapshot = self.session.init_snapshot_from_text(
-                original_acl,
+                text=original_acl,
                 platform=original_platform,
-                snapshot_name="original",
+                name="original",
                 overwrite=True
             )
             refactored_snapshot = self.session.init_snapshot_from_text(
-                refactored_acl,
+                text=refactored_acl,
                 platform=refactored_platform,
-                snapshot_name="refactored",
+                name="refactored",
                 overwrite=True
             )
             result = self.session.q.compareFilters().answer(

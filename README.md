@@ -6,25 +6,65 @@
 
 ## Quick Start
 
-
+### Prerequisites
 - Download and run [batfish](https://pybatfish.readthedocs.io/en/latest/getting_started.html):
-    - docker pull batfish/allinone
-    - docker run --name batfish -v batfish-data:/data -p 8888:8888 -p 9997:9997 -p 9996:9996 batfish/allinone
-    
-- git clone https://github.com/Marphlap/batfish_dashboard.git
-- cd batfish_dashboard/
+    ```bash
+    docker pull batfish/allinone
+    docker run --name batfish -v batfish-data:/data -p 8888:8888 -p 9997:9997 -p 9996:9996 batfish/allinone
+    ```
 
-- docker build -t batfish_dashboard . && docker run -p 8050:8050 batfish_dashboard
+### Deployment Options
 
-If running locally:
-   - Open web browser and navigate to:
-   - 127.0.0.1:8050
+This modernized dashboard can be deployed in multiple ways to connect to your existing Docker network:
 
-If running on remote machine:
-   - Open web browser and navigate to:
-   - *remote_machine_ip*:8050
-        
-Enjoy!
+#### Option 1: Docker Compose (Recommended)
+```bash
+# Simple deployment with automatic network connection
+docker-compose up --build -d
+
+# Or use the deployment script
+./deploy.sh compose    # Linux/Mac
+deploy.bat compose     # Windows
+```
+
+#### Option 2: Direct Docker Commands
+```bash
+# Connect to existing network 'myNetwork'
+docker build -t batfish_dashboard .
+docker run -d --name batfish_dashboard --network myNetwork -p 8050:8050 batfish_dashboard
+
+# Or use the deployment script
+./deploy.sh docker    # Linux/Mac
+deploy.bat docker     # Windows
+```
+
+#### Option 3: Standalone (Original Method)
+```bash
+# Basic deployment without specific network
+docker build -t batfish_dashboard . && docker run -p 8050:8050 batfish_dashboard
+```
+
+### Access the Dashboard
+- **Local access**: http://localhost:8050
+- **Remote access**: http://[your-server-ip]:8050
+
+### Management Commands
+```bash
+# Check deployment status
+./deploy.sh status
+
+# Clean up deployment
+./deploy.sh cleanup
+
+# View logs
+docker-compose logs -f batfish-dashboard  # If using compose
+docker logs -f batfish_dashboard          # If using direct docker
+```
+
+### Network Configuration
+The dashboard automatically connects to the `myNetwork` Docker network. If this network doesn't exist, the deployment scripts will create it automatically.
+
+Enjoy your modernized Batfish Dashboard! 🎉
 
 ## Features
 

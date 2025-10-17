@@ -49,8 +49,9 @@ This document summarizes the modernization of a 5-year-old Batfish dashboard to 
 - **Complete API modernization**: Migrated from deprecated global functions to Session-based API
 - **Session management**: `bf_session` → `Session(host=batfish_host)`
 - **Function calls**: All `bf_*` functions → `session.*` methods
+- **Parameter structure**: Updated to named parameters (e.g., `name=snapshot` vs positional args)
 - **Import structure**: Updated to modern pybatfish 2025.x structure
-- **Question interfaces**: Updated to use modern getattr approach
+- **Question interfaces**: Updated to use modern getattr approach (`session.q.*`)
 - **Error handling**: Added comprehensive exception handling
 - **Data model imports**: Updated to current structure
 
