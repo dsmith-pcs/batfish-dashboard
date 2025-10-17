@@ -32,6 +32,8 @@ This document summarizes the modernization of a 5-year-old Batfish dashboard to 
 - **Updated dash-bootstrap-components**:
   - `FormGroup` → `html.Div` (deprecated in v1.0.0)
   - `InputGroupAddon` → `InputGroupText`
+  - `Form(inline=True)` → `dbc.Row/dbc.Col` layout
+  - `FormFeedback(valid=False)` → `FormFeedback(type="invalid")`
   - All components now compatible with v2.0.4
 
 ### 4. Critical Security Fixes ✅

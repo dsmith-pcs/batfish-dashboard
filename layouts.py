@@ -352,7 +352,7 @@ main_page_layout = html.Div(id='main-page', children=[
                                             placeholder="New Snapshot Name"),
                                         dbc.FormFeedback(
                                             "Please enter a name for the snapshot",
-                                            valid=False,
+                                            type="invalid",
                                         ),
                                         ],
                                             className="mr-3",
