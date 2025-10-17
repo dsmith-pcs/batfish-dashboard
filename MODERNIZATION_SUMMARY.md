@@ -27,6 +27,7 @@ This document summarizes the modernization of a 5-year-old Batfish dashboard to 
 - **Fixed deprecated imports**:
   - `dash_core_components` → `dash.dcc`
   - `dash_html_components` → `dash.html`
+  - `app.run_server()` → `app.run()` (Dash 3.x)
   - Consolidated modern Dash structure
 
 - **Updated dash-bootstrap-components**:
