@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  batfish-dashboard:
+    build: .
+    container_name: batfish_dashboard
+    ports:
+      - "8050:8050"
+    networks:
+      - myNetwork
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8050')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  myNetwork:
+    external: true

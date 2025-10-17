@@ -221,5 +221,25 @@ class Batfish():
 
     @property
     def list_questions(self):
-        # Return available questions from the session
-        return self.session.list_questions()
+        # Return available questions by inspecting the session.q object
+        try:
+            # Get all available question methods from the session.q object
+            question_methods = []
+            if hasattr(self.session, 'q'):
+                for attr_name in dir(self.session.q):
+                    if not attr_name.startswith('_') and callable(getattr(self.session.q, attr_name, None)):
+                        question_methods.append({'name': attr_name})
+            return question_methods
+        except Exception as e:
+            print(f"Error listing questions: {e}")
+            # Return a basic set of common questions as fallback
+            return [
+                {'name': 'layer3Edges'},
+                {'name': 'ospfEdges'},
+                {'name': 'bgpEdges'},
+                {'name': 'ipOwners'},
+                {'name': 'nodeProperties'},
+                {'name': 'traceroute'},
+                {'name': 'reachability'},
+                {'name': 'compareFilters'},
+            ]
