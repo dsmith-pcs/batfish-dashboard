@@ -88,72 +88,88 @@ def getedges(batfish_df):
 
 def create_graph(elements):
     children = [
-        cyto.Cytoscape(
-            id='cytoscape',
-            responsive=True,
+        html.Div([
+            # Export button
+            html.Div([
+                dbc.Button(
+                    [html.I(className="fas fa-download"), " Export to SVG"],
+                    id='export-graph-button',
+                    color='primary',
+                    size='sm',
+                    style={'margin': '10px'}
+                ),
+            ], style={'textAlign': 'right'}),
 
-            style={
-                'width': '1500px',
-                'height': '700px',
-            },
-            elements=elements,
-            stylesheet=[
-                {
-                    'selector': 'edge',
-                    'style': {
-                        'source-text-rotation': 'autorotate',
-                        'edge-text-rotation': 'autorotate',
-                        'target-text-rotation': 'autorotate',
-                        'source-label': 'data(source_label)',
-                        'target-label': 'data(target_label)',
-                        'source-text-offset': '100',
-                        'target-text-offset': '100',
-                        'text-background-opacity': 1,
-                        'text-background-color': '#ffffff',
-                        'text-background-shape': 'roundrectangle',
-                        'text-border-style': 'solid',
-                        'text-border-opacity': 1,
-                        'text-border-width': '1px',
-                        'text-border-color': 'darkgray',
-                        'text-background-padding': '3px',
-                        'curve-style': 'haystack'
-                    }
-                },
-                {
-                    'selector': 'node',
-                    'style': {
-                        'label': 'data(id)',
-                        'text-outline-color': '#ffffff',
-                        'background-image': 'assets/img/Router2.png',
-                        'background-fit': 'cover',
-                        'width': 100,
-                        'height': 100,
-                        'text-background-opacity': 1,
-                        'text-background-color': '#ffffff',
-                        'text-background-shape': 'roundrectangle',
-                        'text-border-style': 'solid',
-                        'text-border-opacity': 1,
-                        'text-border-width': '1px',
-                        'text-border-color': 'darkgray',
-                        'font-weight': 'bold',
-                        'text-background-padding': '5px',
-                    }
-                },
-                {
-                    'selector': '.parent',
-                    'style': {
-                        'background-image': 'none',
-                        'background-color': 'ghostwhite',
-                        'border-color':'#555555',
-                    }
-                },
-            ],
-            layout={'name': 'breadthfirst',
-                    'padding': 60,
-                    'spacingFactor': 2.5,
-                    }
-        ),
+            # The cytoscape graph
+            cyto.Cytoscape(
+                id='cytoscape',
+                responsive=True,
 
+                style={
+                    'width': '1500px',
+                    'height': '700px',
+                },
+                elements=elements,
+                stylesheet=[
+                    {
+                        'selector': 'edge',
+                        'style': {
+                            'source-text-rotation': 'autorotate',
+                            'edge-text-rotation': 'autorotate',
+                            'target-text-rotation': 'autorotate',
+                            'source-label': 'data(source_label)',
+                            'target-label': 'data(target_label)',
+                            'source-text-offset': '100',
+                            'target-text-offset': '100',
+                            'text-background-opacity': 1,
+                            'text-background-color': '#ffffff',
+                            'text-background-shape': 'roundrectangle',
+                            'text-border-style': 'solid',
+                            'text-border-opacity': 1,
+                            'text-border-width': '1px',
+                            'text-border-color': 'darkgray',
+                            'text-background-padding': '3px',
+                            'curve-style': 'haystack'
+                        }
+                    },
+                    {
+                        'selector': 'node',
+                        'style': {
+                            'label': 'data(id)',
+                            'text-outline-color': '#ffffff',
+                            'background-image': 'assets/img/Router2.png',
+                            'background-fit': 'cover',
+                            'width': 100,
+                            'height': 100,
+                            'text-background-opacity': 1,
+                            'text-background-color': '#ffffff',
+                            'text-background-shape': 'roundrectangle',
+                            'text-border-style': 'solid',
+                            'text-border-opacity': 1,
+                            'text-border-width': '1px',
+                            'text-border-color': 'darkgray',
+                            'font-weight': 'bold',
+                            'text-background-padding': '5px',
+                        }
+                    },
+                    {
+                        'selector': '.parent',
+                        'style': {
+                            'background-image': 'none',
+                            'background-color': 'ghostwhite',
+                            'border-color':'#555555',
+                        }
+                    },
+                ],
+                layout={'name': 'breadthfirst',
+                        'padding': 60,
+                        'spacingFactor': 2.5,
+                        }
+            ),
+
+            # Hidden download component
+            dcc.Download(id='download-graph-svg'),
+        ])
     ]
     return children
 

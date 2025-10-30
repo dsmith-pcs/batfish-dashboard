@@ -68,6 +68,15 @@ Enjoy your modernized Batfish Dashboard! 🎉
 
 ## Features
 
+### 🎨 **NEW: SVG Export Functionality**
+Export your network topologies to high-quality SVG vector format!
+- **Preserves manual node positioning** - arrange nodes however you like
+- **Scalable vector graphics** - perfect quality at any zoom level
+- **Editable** - import into Inkscape, Illustrator, or any SVG editor
+- **Auto-timestamped files** - never lose track of your network diagrams
+
+📖 See [EXPORT_FEATURE.md](EXPORT_FEATURE.md) for detailed usage instructions.
+
 ### Graphs
 
 ##### Layer 3 Graph

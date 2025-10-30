@@ -1249,3 +1249,45 @@ def acl_table(original_platform,
 
     )
     return children
+
+# ===== Export Graph to SVG Callback =====
+# Clientside callback to export cytoscape graph to SVG format
+# This preserves the current positions of all nodes after manual repositioning
+app.clientside_callback(
+    """
+    function(n_clicks) {
+        if (!n_clicks) {
+            return window.dash_clientside.no_update;
+        }
+
+        // Get the cytoscape instance
+        var cy = window.cy || document.getElementById('cytoscape')._cyreg.cy;
+
+        if (!cy) {
+            console.error('Cytoscape instance not found');
+            return window.dash_clientside.no_update;
+        }
+
+        // Export to SVG (preserves current node positions)
+        var svgContent = cy.svg({
+            full: true,
+            scale: 1,
+            quality: 1
+        });
+
+        // Generate filename with timestamp
+        var timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+        var filename = 'network-topology-' + timestamp + '.svg';
+
+        return {
+            'content': svgContent,
+            'filename': filename,
+            'type': 'image/svg+xml',
+            'base64': false
+        };
+    }
+    """,
+    Output('download-graph-svg', 'data'),
+    Input('export-graph-button', 'n_clicks'),
+    prevent_initial_call=True
+)
