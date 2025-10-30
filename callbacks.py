@@ -1261,23 +1261,49 @@ app.clientside_callback(
         }
 
         // Get the cytoscape instance
-        var cy = window.cy || document.getElementById('cytoscape')._cyreg.cy;
+        var cy = window.cy;
+
+        // If not in global scope, try to get it from the DOM
+        if (!cy) {
+            var el = document.getElementById('cytoscape');
+            if (el && el._cyreg && el._cyreg.cy) {
+                cy = el._cyreg.cy;
+                window.cy = cy;  // Store for future use
+            }
+        }
 
         if (!cy) {
-            console.error('Cytoscape instance not found');
+            console.error('Cytoscape instance not found. Please wait for the graph to load.');
+            alert('Graph not ready. Please wait a moment and try again.');
             return window.dash_clientside.no_update;
         }
 
-        // Export to SVG (preserves current node positions)
-        var svgContent = cy.svg({
-            full: true,
-            scale: 1,
-            quality: 1
-        });
+        // Generate SVG using the custom function
+        var svgContent;
+        try {
+            if (typeof generateCytoscapeSVG === 'function') {
+                svgContent = generateCytoscapeSVG(cy);
+            } else {
+                console.error('generateCytoscapeSVG function not found');
+                alert('Export function not loaded. Please refresh the page.');
+                return window.dash_clientside.no_update;
+            }
+        } catch (error) {
+            console.error('Error generating SVG:', error);
+            alert('Error generating SVG: ' + error.message);
+            return window.dash_clientside.no_update;
+        }
+
+        if (!svgContent) {
+            console.error('SVG generation returned empty content');
+            return window.dash_clientside.no_update;
+        }
 
         // Generate filename with timestamp
         var timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
         var filename = 'network-topology-' + timestamp + '.svg';
+
+        console.log('Successfully generated SVG export: ' + filename);
 
         return {
             'content': svgContent,
